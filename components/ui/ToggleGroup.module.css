@@ -1,0 +1,34 @@
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: var(--bg-void);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  width: fit-content;
+}
+
+.toggle {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle:hover:not(.selected) {
+  color: var(--text-primary);
+  background: var(--bg-surface);
+}
+
+.selected {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-light);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
