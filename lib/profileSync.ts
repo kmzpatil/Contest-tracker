@@ -6,6 +6,22 @@ export interface TopicBucket {
   source: 'codeforces' | 'leetcode';
 }
 
+export interface SubmissionEntry {
+  id: string;
+  title: string;
+  titleSlug?: string;
+  timestamp: number;
+  platform: 'codeforces' | 'leetcode';
+}
+
+export interface ContestHistoryEntry {
+  contestId: string;
+  contestName: string;
+  rating: number;
+  rank: number;
+  timestamp: number;
+}
+
 export interface CodeforcesStats {
   handle: string;
   rating: number;
@@ -17,6 +33,8 @@ export interface CodeforcesStats {
   contests: number;
   solved: number;
   topicDistribution: TopicBucket[];
+  contestHistory: ContestHistoryEntry[];
+  recentSubmissions: SubmissionEntry[];
 }
 
 export interface LeetCodeStats {
@@ -26,6 +44,8 @@ export interface LeetCodeStats {
   avatar: string;
   solved: number;
   topicDistribution: TopicBucket[];
+  contestHistory: ContestHistoryEntry[];
+  recentSubmissions: SubmissionEntry[];
 }
 
 export interface SyncedProfile {
@@ -111,6 +131,21 @@ interface LeetCodeGraphQLResponse {
       rating: number;
       globalRanking: number;
     } | null;
+    userContestRankingHistory?: Array<{
+      attended: boolean;
+      rating: number;
+      ranking: number;
+      contest: {
+        title: string;
+        startTime: number;
+      };
+    }>;
+    recentAcSubmissionList?: Array<{
+      id: string;
+      title: string;
+      titleSlug: string;
+      timestamp: string;
+    }>;
   };
 }
 
@@ -183,6 +218,21 @@ async function fetchCodeforcesUser(handle: string): Promise<CodeforcesStats> {
     Array.from(tagCounter.entries()).map(([label, count]) => ({ label, count })),
   );
 
+  const contestHistory: ContestHistoryEntry[] = (ratingData.result || []).map((c: any) => ({
+    contestId: c.contestId.toString(),
+    contestName: c.contestName,
+    rating: c.newRating,
+    rank: c.rank,
+    timestamp: c.ratingUpdateTimeSeconds,
+  }));
+
+  const recentSubmissions: SubmissionEntry[] = accepted.slice(0, 10).map((s: any) => ({
+    id: `${s.contestId}-${s.problem.index}`,
+    title: s.problem.name,
+    timestamp: s.creationTimeSeconds,
+    platform: 'codeforces',
+  }));
+
   return {
     handle: user.handle,
     rating: user.rating || 0,
@@ -194,6 +244,8 @@ async function fetchCodeforcesUser(handle: string): Promise<CodeforcesStats> {
     contests: (ratingData.result || []).length,
     solved: solvedUnique.size,
     topicDistribution,
+    contestHistory,
+    recentSubmissions,
   };
 }
 
@@ -230,6 +282,21 @@ async function fetchLeetCodeUser(handle: string): Promise<LeetCodeStats> {
       userContestRanking(username: $username) {
         rating
         globalRanking
+      }
+      userContestRankingHistory(username: $username) {
+        attended
+        rating
+        ranking
+        contest {
+          title
+          startTime
+        }
+      }
+      recentAcSubmissionList(username: $username, limit: 10) {
+        id
+        title
+        titleSlug
+        timestamp
       }
     }
   `;
@@ -270,6 +337,26 @@ async function fetchLeetCodeUser(handle: string): Promise<LeetCodeStats> {
   );
 
   const contest = data.data?.userContestRanking;
+  const history = data.data?.userContestRankingHistory || [];
+  const recent = data.data?.recentAcSubmissionList || [];
+
+  const contestHistory: ContestHistoryEntry[] = history
+    .filter((h) => h.attended)
+    .map((h) => ({
+      contestId: h.contest.title,
+      contestName: h.contest.title,
+      rating: Math.round(h.rating),
+      rank: h.ranking,
+      timestamp: h.contest.startTime,
+    }));
+
+  const recentSubmissions: SubmissionEntry[] = recent.map((s) => ({
+    id: s.id,
+    title: s.title,
+    titleSlug: s.titleSlug,
+    timestamp: parseInt(s.timestamp),
+    platform: 'leetcode',
+  }));
 
   return {
     handle: matchedUser.username,
@@ -278,6 +365,8 @@ async function fetchLeetCodeUser(handle: string): Promise<LeetCodeStats> {
     avatar: matchedUser.profile.userAvatar || '',
     solved,
     topicDistribution,
+    contestHistory,
+    recentSubmissions,
   };
 }
 

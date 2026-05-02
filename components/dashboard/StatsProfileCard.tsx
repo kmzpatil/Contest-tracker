@@ -30,7 +30,7 @@ const StatCard = ({
   isConnected?: boolean;
   trend?: number[];
 }) => (
-  <div className={`luxury-card p-6 flex flex-col justify-between group h-full relative overflow-hidden ${!isConnected && 'opacity-60 bg-zinc-900/40'}`}>
+  <div className={`luxury-card flex flex-col justify-between group h-full relative overflow-hidden ${!isConnected && 'opacity-60 bg-zinc-900/40'}`}>
     {!isConnected && (
       <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center p-4 text-center">
         <Info size={20} className="text-muted-foreground mb-2" />
@@ -62,14 +62,13 @@ export function StatsProfileCard({ user }: StatsProfileCardProps) {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="lg:col-span-2 luxury-card p-8 flex flex-col sm:flex-row items-center gap-10 bg-zinc-900/10"
+        className="lg:col-span-2 luxury-card flex flex-col sm:flex-row items-center gap-10 bg-zinc-900/10"
       >
         <div className="relative shrink-0">
           <div className="w-32 h-32 rounded-full border-4 border-white/5 p-1 relative">
             <div className="w-full h-full rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden">
                <User size={64} className="text-zinc-600 mt-4" />
             </div>
-            {/* Subtle progress ring */}
             <svg className="absolute inset-0 w-full h-full -rotate-90">
               <circle
                 cx="50%"

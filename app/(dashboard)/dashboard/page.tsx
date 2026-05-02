@@ -9,6 +9,7 @@ import { StatsProfileCard } from '@/components/dashboard/StatsProfileCard';
 import { ActivityHeatmap } from '@/components/dashboard/ActivityHeatmap';
 import { RecentSubmissions } from '@/components/dashboard/RecentSubmissions';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { RatingHistoryChart } from '@/components/dashboard/RatingHistoryChart';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -17,11 +18,9 @@ import {
   RefreshCw, 
   Globe, 
   ChevronRight, 
-  Settings, 
   ExternalLink, 
   Maximize2, 
   Minimize2,
-  User,
   Link as LinkIcon,
   Shield
 } from 'lucide-react';
@@ -114,7 +113,7 @@ export default function DashboardPage() {
     solved: profile?.solvedTotal || 0,
     cfRating: profile?.codeforces?.rating || 0,
     lcSolved: profile?.leetcode?.solved || 0,
-    streak: profile?.streak || 0 // Assuming streak is part of profile now, otherwise 0
+    streak: profile?.streak || 0
   }), [user, profile]);
 
   const REMIND_OPTIONS = [
@@ -126,13 +125,13 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-white/10 custom-scrollbar overflow-y-auto">
-      <div className="max-w-[1600px] mx-auto p-6 lg:p-10 space-y-10 animate-in">
+      <div className="max-w-[1600px] mx-auto p-6 lg:p-10 space-y-12 animate-in">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-1">
             <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-            <p className="text-muted-foreground text-sm">Real-time telemetry and upcoming competition schedule.</p>
+            <p className="text-zinc-500 text-sm font-medium">Real-time telemetry and upcoming competition schedule.</p>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="secondary" size="sm" onClick={refresh} disabled={loading}>
@@ -156,24 +155,26 @@ export default function DashboardPage() {
         </section>
 
         {/* Main Dashboard Grid */}
-        <div className="flex flex-col xl:flex-row gap-8">
+        <div className="flex flex-col xl:flex-row gap-10">
           
           {/* Main Content Column */}
-          <div className={`flex-1 space-y-10 transition-all duration-700 ease-out ${isSidebarOpen ? 'xl:w-[65%]' : 'xl:w-full'}`}>
+          <div className={`flex-1 space-y-12 transition-all duration-700 ease-out ${isSidebarOpen ? 'xl:w-[65%]' : 'xl:w-full'}`}>
             
             {/* Upcoming Contests */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Globe size={18} className="text-muted-foreground" />
+            <div className="space-y-8">
+              <div className="flex items-center justify-between px-2">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white/5 rounded-lg">
+                    <Globe size={18} />
+                  </div>
                   <h2 className="text-lg font-semibold tracking-tight">Upcoming Contests</h2>
                 </div>
-                <Button variant="ghost" size="sm" className="text-xs font-medium">
+                <Button variant="ghost" size="sm" className="text-xs font-semibold">
                   View Full Schedule <ChevronRight size={14} className="ml-1" />
                 </Button>
               </div>
 
-              <div className={`grid grid-cols-1 gap-6 ${isSidebarOpen ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
+              <div className={`grid grid-cols-1 gap-8 ${isSidebarOpen ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
                 {loading ? (
                   Array.from({ length: 4 }).map((_, i) => (
                     <div key={i} className="h-48 luxury-card skeleton opacity-50" />
@@ -188,22 +189,30 @@ export default function DashboardPage() {
                     />
                   ))
                 ) : (
-                  <div className="col-span-full py-12 text-center luxury-card border-dashed">
-                    <p className="text-muted-foreground text-sm">No upcoming contests found.</p>
+                  <div className="col-span-full py-16 text-center luxury-card border-dashed">
+                    <p className="text-zinc-500 text-sm font-medium">No upcoming contests found.</p>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Bottom Row: Submissions & History */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                 <h2 className="text-lg font-semibold tracking-tight">Recent Activity</h2>
-                 <RecentSubmissions />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <div className="space-y-8">
+                 <h2 className="text-lg font-semibold tracking-tight px-2">Recent Activity</h2>
+                 <RecentSubmissions 
+                   submissions={[
+                     ...(profile?.codeforces?.recentSubmissions || []),
+                     ...(profile?.leetcode?.recentSubmissions || [])
+                   ]} 
+                 />
               </div>
-              <div className="space-y-6">
-                 <h2 className="text-lg font-semibold tracking-tight">Rating Trajectory</h2>
-                 <RatingHistoryChart />
+              <div className="space-y-8">
+                 <h2 className="text-lg font-semibold tracking-tight px-2">Rating Trajectory</h2>
+                 <RatingHistoryChart 
+                   cfHistory={profile?.codeforces?.contestHistory}
+                   lcHistory={profile?.leetcode?.contestHistory}
+                 />
               </div>
             </div>
           </div>
@@ -216,15 +225,15 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="w-full xl:w-[400px] space-y-8"
+                className="w-full xl:w-[400px] space-y-10"
               >
-                <div className="space-y-6">
-                  <h2 className="text-lg font-semibold tracking-tight">Consistency</h2>
+                <div className="space-y-8">
+                  <h2 className="text-lg font-semibold tracking-tight px-2">Consistency</h2>
                   <ActivityHeatmap />
                 </div>
 
                 {/* Profile Sync Section */}
-                <div className="luxury-card p-6 space-y-6 bg-zinc-900/20">
+                <div className="luxury-card space-y-8 bg-zinc-900/20">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-white/5 rounded-lg">
@@ -232,19 +241,18 @@ export default function DashboardPage() {
                       </div>
                       <h3 className="font-semibold text-sm">Platform Link</h3>
                     </div>
-                    <Shield size={16} className="text-muted-foreground" />
+                    <Shield size={16} className="text-zinc-500" />
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-1">Unified Handle</label>
-                      <input
-                        className="w-full bg-white/[0.03] border border-white/5 focus:border-white/20 rounded-xl py-3 px-4 text-sm outline-none transition-all placeholder:text-zinc-700"
-                        value={handleInput}
-                        onChange={(e) => setHandleInput(e.target.value)}
-                        placeholder="Enter Codeforces/LeetCode handle"
-                      />
-                    </div>
+                  <div className="space-y-6">
+                    <Input 
+                      label="Unified Handle"
+                      value={handleInput}
+                      onChange={(e) => setHandleInput(e.target.value)}
+                      placeholder="Codeforces/LeetCode handle"
+                      fullWidth
+                    />
+                    
                     <Button 
                       onClick={() => syncProfile(handleInput.trim())}
                       disabled={!handleInput.trim() || profileBusy}
@@ -256,23 +264,23 @@ export default function DashboardPage() {
                     </Button>
                     
                     {profileMessage && (
-                      <p className="text-xs text-center text-muted-foreground animate-pulse">
+                      <p className="text-xs text-center text-zinc-500 font-medium">
                         {profileMessage}
                       </p>
                     )}
                   </div>
 
-                  <div className="pt-4 flex items-center justify-between border-t border-white/5">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Last Synced</span>
-                    <span className="text-xs font-medium">
+                  <div className="pt-6 flex items-center justify-between border-t border-white/5">
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Last Synced</span>
+                    <span className="text-xs font-semibold">
                       {profile?.syncedAt ? new Date(profile.syncedAt).toLocaleTimeString() : 'Never'}
                     </span>
                   </div>
                 </div>
 
                 {/* External Nodes */}
-                <div className="luxury-card p-6 space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">External Resources</h3>
+                <div className="luxury-card space-y-6">
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">External Resources</h3>
                   <div className="grid grid-cols-1 gap-2">
                     {[
                       { label: 'Codeforces', url: 'https://codeforces.com' },
@@ -285,10 +293,10 @@ export default function DashboardPage() {
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex justify-between items-center p-3 rounded-xl hover:bg-white/5 transition-all group"
+                        className="flex justify-between items-center p-4 rounded-xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5"
                       >
-                        <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground">{item.label}</span>
-                        <ExternalLink size={14} className="opacity-0 group-hover:opacity-100 transition-all" />
+                        <span className="text-sm font-semibold text-zinc-400 group-hover:text-white">{item.label}</span>
+                        <ExternalLink size={14} className="opacity-0 group-hover:opacity-100 transition-all text-zinc-500" />
                       </a>
                     ))}
                   </div>
@@ -301,10 +309,10 @@ export default function DashboardPage() {
 
       <Modal isOpen={alarmModalOpen} onClose={() => setAlarmModalOpen(false)} title="Configure Alarm">
         {selectedContest ? (
-          <div className="space-y-6">
-            <div className="p-4 bg-white/5 rounded-xl border border-white/5">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Target Contest</p>
-              <p className="text-base font-semibold">{selectedContest.name}</p>
+          <div className="space-y-8">
+            <div className="p-5 bg-white/5 rounded-2xl border border-white/5">
+              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Target Contest</p>
+              <p className="text-lg font-bold">{selectedContest.name}</p>
             </div>
             <div className="grid grid-cols-1 gap-3">
               {REMIND_OPTIONS.map((option) => (
@@ -313,10 +321,10 @@ export default function DashboardPage() {
                   variant="secondary"
                   onClick={() => handleSaveAlarm(option.value)}
                   loading={savingAlarm}
-                  className="justify-between"
+                  className="justify-between h-14"
                 >
-                  {option.label}
-                  <Plus size={14} />
+                  <span className="font-semibold">{option.label}</span>
+                  <Plus size={16} />
                 </Button>
               ))}
             </div>

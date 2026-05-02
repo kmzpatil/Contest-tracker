@@ -22,18 +22,18 @@ export function ContestCard({ contest, onSetAlarm, index = 0 }: ContestCardProps
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
-      className="luxury-card p-6 flex flex-col justify-between group h-full"
+      className="luxury-card flex flex-col justify-between group h-full"
     >
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 text-muted-foreground group-hover:text-foreground transition-all">
+            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 text-zinc-500 group-hover:text-white transition-all">
               {isCodeforces ? <Terminal size={20} /> :
                isLeetCode ? <Code2 size={20} /> :
                <Trophy size={20} />}
             </div>
             <div>
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                 {contest.platform}
               </p>
             </div>
@@ -46,14 +46,14 @@ export function ContestCard({ contest, onSetAlarm, index = 0 }: ContestCardProps
 
         <div className="space-y-2">
           <h3 
-            className="text-lg font-bold tracking-tight line-clamp-2 leading-tight group-hover:text-zinc-300 transition-colors cursor-help"
+            className="text-lg font-bold tracking-tight line-clamp-2 leading-tight group-hover:text-white transition-colors cursor-help"
             title={contest.name}
           >
             {contest.name}
           </h3>
           <div className="flex items-center gap-2 text-zinc-500">
             <Clock size={12} />
-            <p className="text-xs font-medium">Starts In</p>
+            <p className="text-xs font-semibold">Starts In</p>
           </div>
         </div>
       </div>
