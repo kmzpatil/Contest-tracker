@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Activity } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 
 export function RatingHistoryChart() {
   // Mock data for rating history
@@ -11,12 +11,12 @@ export function RatingHistoryChart() {
   
   const width = 800;
   const height = 200;
-  const padding = 40;
+  const padding = 20;
   
-  const getPath = (data: number[], color: string) => {
-    const min = Math.min(...data, ...cfData, ...lcData);
-    const max = Math.max(...data, ...cfData, ...lcData);
-    const range = max - min;
+  const getPath = (data: number[]) => {
+    const min = Math.min(...cfData, ...lcData);
+    const max = Math.max(...cfData, ...lcData);
+    const range = max - min || 1;
     
     return data.map((val, i) => {
       const x = (i / (data.length - 1)) * (width - 2 * padding) + padding;
@@ -26,51 +26,39 @@ export function RatingHistoryChart() {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.5, duration: 0.8 }}
-      className="glass-card p-8 rounded-3xl border-white/5 relative overflow-hidden hud-corners"
-    >
-      <div className="absolute top-0 right-0 p-4 opacity-5">
-        <Activity size={120} className="text-accent-cyan" />
-      </div>
+    <div className="luxury-card p-8 bg-zinc-900/10 h-full flex flex-col justify-between">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-white/5 rounded-lg">
+            <TrendingUp size={18} />
+          </div>
+          <h3 className="text-sm font-semibold tracking-tight">Rating Trajectory</h3>
+        </div>
 
-      <div className="flex items-center justify-between mb-8 relative z-10">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-accent-cyan/10 rounded-xl border border-accent-cyan/20">
-            <TrendingUp size={20} className="text-accent-cyan" />
-          </div>
-          <div>
-            <h3 className="text-sm font-black text-white tracking-[0.4em] uppercase tech-bracket font-display">PERFORMANCE_HISTORY</h3>
-            <p className="text-[9px] font-black text-slate-600 mt-2 uppercase tracking-[0.3em] font-mono">NEURAL_RATING_TREND_V.1</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-accent-cyan shadow-[0_0_8px_var(--accent-cyan)]" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-mono">CODEFORCES</span>
+            <div className="w-2 h-2 rounded-full bg-white" />
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Codeforces</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-accent-magenta shadow-[0_0_8px_var(--accent-magenta)]" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-mono">LEETCODE</span>
+            <div className="w-2 h-2 rounded-full bg-zinc-600" />
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">LeetCode</span>
           </div>
         </div>
       </div>
 
-      <div className="relative w-full aspect-[4/1] min-h-[200px]">
+      <div className="relative w-full aspect-[4/1] min-h-[160px]">
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible">
           {/* Grid Lines */}
-          {[0, 1, 2, 3, 4].map((i) => (
+          {[0, 1, 2].map((i) => (
             <line
               key={i}
               x1={padding}
-              y1={padding + (i * (height - 2 * padding)) / 4}
+              y1={padding + (i * (height - 2 * padding)) / 2}
               x2={width - padding}
-              y2={padding + (i * (height - 2 * padding)) / 4}
+              y2={padding + (i * (height - 2 * padding)) / 2}
               stroke="white"
-              strokeOpacity="0.03"
+              strokeOpacity="0.05"
               strokeWidth="1"
             />
           ))}
@@ -79,41 +67,28 @@ export function RatingHistoryChart() {
           <motion.path
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 2, ease: "easeInOut" }}
-            d={getPath(cfData, 'var(--accent-cyan)')}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            d={getPath(cfData)}
             fill="none"
-            stroke="var(--accent-cyan)"
-            strokeWidth="3"
+            stroke="white"
+            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="drop-shadow-[0_0_8px_rgba(0,245,255,0.4)]"
           />
           <motion.path
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 2, delay: 0.5, ease: "easeInOut" }}
-            d={getPath(lcData, 'var(--accent-magenta)')}
+            animate={{ pathLength: 1, opacity: 0.4 }}
+            transition={{ duration: 1.5, delay: 0.3, ease: "easeOut" }}
+            d={getPath(lcData)}
             fill="none"
-            stroke="var(--accent-magenta)"
-            strokeWidth="3"
+            stroke="white"
+            strokeWidth="2"
+            strokeOpacity="0.4"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="drop-shadow-[0_0_8px_rgba(255,0,255,0.4)]"
-          />
-
-          {/* Data Points (End) */}
-          <motion.circle
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 2 }}
-            cx={(cfData.length - 1) / (cfData.length - 1) * (width - 2 * padding) + padding}
-            cy={height - ((cfData[cfData.length - 1] - Math.min(...cfData, ...lcData)) / (Math.max(...cfData, ...lcData) - Math.min(...cfData, ...lcData))) * (height - 2 * padding) - padding}
-            r="4"
-            fill="var(--accent-cyan)"
-            className="shadow-[0_0_10px_var(--accent-cyan)]"
           />
         </svg>
       </div>
-    </motion.div>
+    </div>
   );
 }

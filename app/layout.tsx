@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-import { Fira_Code, Fira_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Providers } from "./Providers";
 import "./globals.css";
 
-const firaCode = Fira_Code({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-fira-code",
-  display: "swap",
-});
-
-const firaSans = Fira_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-fira-sans",
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -28,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${firaCode.variable} ${firaSans.variable}`}>
+    <html lang="en" className={`${inter.variable}`}>
       <body className="antialiased">
         <div className="mesh-bg" />
         <Providers>

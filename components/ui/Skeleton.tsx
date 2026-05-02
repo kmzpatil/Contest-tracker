@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './Skeleton.module.css';
 
 interface SkeletonProps {
   width?: string;
@@ -8,10 +7,10 @@ interface SkeletonProps {
   className?: string;
 }
 
-export function Skeleton({ width = '100%', height = '20px', borderRadius = '8px', className = '' }: SkeletonProps) {
+export function Skeleton({ width = '100%', height = '20px', borderRadius = '12px', className = '' }: SkeletonProps) {
   return (
     <div
-      className={`${styles.skeleton} ${className}`}
+      className={`skeleton ${className}`}
       style={{ width, height, borderRadius }}
     />
   );
@@ -19,18 +18,28 @@ export function Skeleton({ width = '100%', height = '20px', borderRadius = '8px'
 
 export function ContestCardSkeleton() {
   return (
-    <div className={`${styles.cardSkeleton} glass`}>
-      <div className={styles.row}>
-        <Skeleton width="36px" height="36px" borderRadius="8px" />
-        <div className={styles.col}>
-          <Skeleton width="70%" height="18px" />
-          <Skeleton width="50%" height="14px" />
+    <div className="luxury-card p-6 space-y-6 opacity-50">
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-3">
+          <Skeleton width="40px" height="40px" borderRadius="12px" />
+          <div className="space-y-2">
+            <Skeleton width="60px" height="12px" />
+          </div>
         </div>
+        <Skeleton width="40px" height="20px" borderRadius="20px" />
       </div>
-      <Skeleton width="180px" height="40px" className={styles.timerSkeleton} />
-      <div className={styles.row}>
-        <Skeleton width="80px" height="32px" />
-        <Skeleton width="120px" height="32px" />
+
+      <div className="space-y-2">
+        <Skeleton width="80%" height="24px" />
+        <Skeleton width="40%" height="16px" />
+      </div>
+
+      <div className="mt-8 space-y-6">
+        <Skeleton width="100%" height="56px" borderRadius="12px" />
+        <div className="grid grid-cols-2 gap-3">
+          <Skeleton width="100%" height="36px" borderRadius="12px" />
+          <Skeleton width="100%" height="36px" borderRadius="12px" />
+        </div>
       </div>
     </div>
   );

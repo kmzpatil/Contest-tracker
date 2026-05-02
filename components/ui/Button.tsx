@@ -24,22 +24,22 @@ export function Button({
   ...props 
 }: ButtonProps) {
   const variants = {
-    primary: "bg-primary hover:bg-primary/80 text-white shadow-[0_0_15px_rgba(124,58,237,0.3)]",
-    secondary: "bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-accent-cyan/50",
-    ghost: "bg-transparent hover:bg-white/5 text-slate-400 hover:text-white",
-    danger: "bg-accent-magenta/10 hover:bg-accent-magenta/20 text-accent-magenta border border-accent-magenta/30"
+    primary: "bg-white text-black hover:bg-zinc-200 shadow-sm",
+    secondary: "bg-zinc-900 border border-zinc-800 text-zinc-100 hover:bg-zinc-800 hover:border-zinc-700",
+    ghost: "bg-transparent hover:bg-white/5 text-zinc-500 hover:text-zinc-100",
+    danger: "bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20"
   };
 
   const sizes = {
-    sm: "px-3 py-1.5 text-[10px]",
-    md: "px-6 py-3 text-xs",
-    lg: "px-8 py-4 text-sm"
+    sm: "px-3 py-1.5 text-xs",
+    md: "px-5 py-2.5 text-sm",
+    lg: "px-8 py-4 text-base"
   };
 
   return (
     <button 
       className={cn(
-        "relative flex items-center justify-center font-black uppercase tracking-[0.2em] transition-all duration-300 rounded-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden group",
+        "relative flex items-center justify-center font-semibold transition-all duration-300 rounded-xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden",
         variants[variant],
         sizes[size],
         fullWidth && "w-full",
@@ -48,13 +48,9 @@ export function Button({
       disabled={disabled || loading}
       {...props}
     >
-      {/* HUD Accent Brackets on Hover */}
-      <span className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/0 group-hover:border-white/40 transition-all duration-300 translate-x-1 translate-y-1" />
-      <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/0 group-hover:border-white/40 transition-all duration-300 -translate-x-1 -translate-y-1" />
-
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-inherit">
-          <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-current/20 border-t-current rounded-full animate-spin" />
         </div>
       )}
       <span className={cn("flex items-center gap-2", loading && "opacity-0")}>
